@@ -4,118 +4,121 @@ layout Layout = WhitespaceAndComment* !>> [\ \t\n\r#];
 lexical WhitespaceAndComment = [\ \t\n\r] | @category="Comment" "#" ![\n]* $;
 
 start syntax Module
-    = moduleDef: 'defmodule' ID moduleName Import* Component* 'end';
+    = moduleDef: 'defmodule' ID moduleName Import* imports Component* comps 'end';
 
 syntax Import
-    = importDef: 'using' ID importedModule ;
+    = importDef: 'using' ID importedModule;
 
 syntax Component
-    = space: Space 
-    | operator: Operator 
-    | expression: Expression 
-    | rule: Rule 
-    | variable: Variable ;
+    = space:         Space
+    | operatorDef:   OperatorDef
+    | expressionDef: ExpressionDef
+    | ruleDef:       RuleDef
+    | variableDef:   VariableDef;
 
 syntax Space
-    = spaceDef: 'defspace' ID name SpaceSub? parent 'end' ;
+    = spaceDef: 'defspace' ID name SpaceSub? sub 'end';
 
 syntax SpaceSub
-    = subtype: '<' ID parentName ;
+    = subtype: '\<' ID parentName;
 
-syntax Operator
-    = operatorDef: 'defoperator' Name name ':' OperatorType operatorType Attributes? attrs 'end' ;
+syntax OperatorDef
+    = operatorDef: 'defoperator' Name name ':' OperatorType operatorType Attributes? attrs 'end';
 
 syntax OperatorType
-    = opChain: ID firstType OperatorNext* ;
+    = opChain: ID firstType OperatorNext* chain;
 
 syntax OperatorNext
-    = nextType: '->' ID nextType ;
+    = nextType: '-\>' ID nextId;
 
 syntax Attributes
-    = attrs: '[' Attribute+ attrList ']' ;
+    = attrs: '[' Attribute+ attrList ']';
 
 syntax Attribute
-    = attr: ID key AttributeValue? value ;
+    = attr: ID key AttributeValue? value;
 
 syntax AttributeValue
-    = numValue: ':' Number | idValue: ':' ID | opValue: ':' Operator ;
+    = intValue:   ':' IntLiteral n
+    | floatValue: ':' FloatLiteral f
+    | idValue:    ':' ID id
+    | opValue:    ':' Operator op;
 
 syntax ExpressionDef
-    = expressionDef: 'defexpression' ExpressionBody body 'end' ;
+    = expressionDef: 'defexpression' ExpressionBody body 'end';
 
 syntax ExpressionBody
-    = quantified: '(' Quantifier ID variable 'in' ID domain '.' ExpressionBody body ')'
-    | binary: '(' ExpressionBody left Operator op ExpressionBody right ')'
+    = quantified:   '(' Quantifier quantifier ID variable 'in' ID domain '.' ExpressionBody body ')'
+    | binary:       '(' ExpressionBody left Operator op ExpressionBody right ')'
     | functionCall: '(' Name func ExpressionList args ')'
-    | exprId: Expression ID ExpressionBody
-    | exprOp: Expression Operator ExpressionBody
-    | simpleExpr: Expression
-    ;
+    | exprId:       Expression expr ID id ExpressionBody rest
+    | exprOp:       Expression expr Operator op ExpressionBody rest
+    | simpleExpr:   Expression expr;
 
 syntax ExpressionList
-    = exprList: Expression* ;
+    = exprList: Expression* exprs;
 
 syntax Expression
-    = nested: '(' ExpressionBody ')'
-    | namedExpr: Name ExpressionList
-    | identifier: ID
-    | number: Number
-    ;
+    = nested:      '(' ExpressionBody body ')'
+    | namedExpr:   Name name ExpressionList args
+    | identifier:  ID id
+    | intNumber:   IntLiteral n
+    | floatNumber: FloatLiteral f;
 
 syntax Quantifier
-    = forall: 'forall' | exists: 'exists' ;
+    = forall: 'forall'
+    | exists: 'exists';
 
 syntax RuleDef
-    = ruleDef: 'defrule' '(' RuleOperator left ')' '->' '(' RuleOperator right ')' 'end' ;
+    = ruleDef: 'defrule' '(' RuleOperator left ')' '-\>' '(' RuleOperator right ')' 'end';
 
 syntax RuleOperator
-    = ruleOp: Name name Parameter* ;
+    = ruleOp: Name name Parameter* params;
 
 syntax Parameter
-    = nestedParam: '(' RuleOperator ')'
-    | idParam: ID
-    | numParam: Number
-    ;
+    = nestedParam: '(' RuleOperator op ')'
+    | idParam:     ID id
+    | intParam:    IntLiteral n;
 
 syntax VariableDef
-    = variableDef: 'defvar' VariableList vars 'end' ;
+    = variableDef: 'defvar' VariableList vars 'end';
 
 syntax VariableList
-    = vars: VariableDecl (',' VariableDecl)* ;
+    = varList: {VariableDecl ","}+ decls;
 
 syntax VariableDecl
-    = varDecl: ID varName ':' ID varType ;
+    = varDecl: ID varName ':' ID varType;
 
 syntax Name
-    = opName: Operator | idName: ID ;
+    = opName: Operator op
+    | idName: ID id;
 
 syntax Operator
-    = mult: '*'
-    | div: '/'
-    | minus: '-'
-    | plus: '+'
-    | power: '**'
-    | mod: '%'
-    | lt: '<'
-    | gt: '>'
-    | lte: '<='
-    | gte: '>='
-    | neq: '<>'
-    | eq: '='
-    | and: 'and'
-    | or: 'or'
-    | neg: 'neg'
-    | implies: '->'
-    | inOp: 'in'
-    | equiv: '≡'
-    | arrow: '=>'
-    ;
+    = mult:    '*'
+    | div:     '/'
+    | minus:   '-'
+    | plus:    '+'
+    | power:   '**'
+    | modOp:   '%'
+    | lt:      '\<'
+    | gt:      '\>'
+    | lte:     '\<='
+    | gte:     '\>='
+    | neq:     '\<\>'
+    | eq:      '='
+    | and:     'and' !>> [a-zA-Z0-9\-]
+    | or:      'or'  !>> [a-zA-Z0-9\-]
+    | neg:     'neg' !>> [a-zA-Z0-9\-]
+    | implies: '-\>'
+    | inOp:    'in'  !>> [a-zA-Z0-9\-]
+    | arrow:   '=\>';
 
-lexical Number = [0-9]+ ("." [0-9]+)?;
-lexical ID = ([a-zA-Z][a-zA-Z0-9_\-]* !>> [a-zA-Z0-9_\-]) \ Reserved;
+lexical FloatLiteral = [0-9]+ "." [0-9]+;
+lexical IntLiteral   = [0-9]+ !>> [0-9.];
 
-keyword Reserved =
-      "defmodule"
+lexical ID = ([a-zA-Z][a-zA-Z0-9\-]* !>> [a-zA-Z0-9\-]) \ Reserved;
+
+keyword Reserved
+    = "defmodule"
     | "using"
     | "defspace"
     | "defoperator"
