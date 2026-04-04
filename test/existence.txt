@@ -1,0 +1,9 @@
+defmodule Existence
+  using Base
+
+  defspace Nat end
+
+  defoperator isZero : Nat -> Bool end
+
+  defexpression (exists x in Nat . (isZero x)) end
+end

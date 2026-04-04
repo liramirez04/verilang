@@ -5,20 +5,27 @@ import AST;
 import ParseTree;
 import IO;
 import Set;
+import String;
 
 // Recibe la ruta de un archivo .txt y retorna el arbol de parseo concreto
 Tree parseFile(loc source) {
-    return parse(#start[Module], source);
+    return parse(#start[Module], source, allowAmbiguity=true);
 }
 
 // Recibe un string con codigo VeriLang y retorna el arbol de parseo
 Tree parseString(str src) {
-    return parse(#start[Module], src);
+    return parse(#start[Module], src, allowAmbiguity=true);
 }
 
 // Construye el AST (AModule) a partir del arbol de parseo concreto
 AModule buildAST(loc source) {
     Tree t = parseFile(source);
+    return buildModule(t.top);
+}
+
+// Construye el AST directamente desde un String
+AModule buildASTFromString(str src) {
+    Tree t = parseString(src);
     return buildModule(t.top);
 }
 
@@ -45,7 +52,7 @@ AComponent buildComponent((Component)`<VariableDef v>`)   = aVariable(buildVaria
 
 // ── Space ─────────────────────────────────────────────────────────────────────
 ASpace buildSpace((Space)`defspace <ID name> <SpaceSub sub> end`)
-    = aSpace("<name>", buildSpaceSub(sub));
+    = aSpaceWithSub("<name>", buildSpaceSub(sub));
 ASpace buildSpace((Space)`defspace <ID name> end`)
     = aSpaceNoSub("<name>");
 
@@ -58,8 +65,10 @@ AOperatorDef buildOperatorDef((OperatorDef)`defoperator <Name n> : <OperatorType
 AOperatorDef buildOperatorDef((OperatorDef)`defoperator <Name n> : <OperatorType t> end`)
     = aOperatorDef(buildName(n), buildOperatorType(t), []);
 
-AOperatorType buildOperatorType((OperatorType)`<ID first> <OperatorNext* chain>`)
-    = aOpChain("<first>", [ "<nx.nextId>" | nx <- chain ]);
+str buildNextId((OperatorNext)`-\> <ID id>`) = "<id>";
+
+AOperatorType buildOperatorType((OperatorType)`<ID first> <OperatorNext+ chain>`)
+    = aOpChain("<first>", [ buildNextId(nx) | nx <- chain ]);
 
 str buildName((Name)`<Operator op>`) = "<op>";
 str buildName((Name)`<ID id>`)       = "<id>";

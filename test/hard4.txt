@@ -1,0 +1,23 @@
+defmodule FullModule
+  using Base
+  using Logic
+  using Sets
+  using Numbers
+
+  defspace Set end
+  defspace Element end
+  defspace Bool end
+  defspace Nat < Int end
+  defspace Int < Real end
+
+  defoperator union : Set -> Set -> Set [associative id] end
+  defoperator isIn : Element -> Set -> Bool end
+  defoperator add : Nat -> Nat -> Nat [commutative id : 0] end
+  defoperator not : Bool -> Bool end
+
+  defvar x : Element , y : Element , s : Set end
+
+  defrule (union s s) -> (isIn x s) end
+
+  defexpression (forall x in Element . (forall s in Set . x isIn s)) end
+end

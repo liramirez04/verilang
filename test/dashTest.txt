@@ -1,0 +1,9 @@
+defmodule my-module
+  using my-lib
+
+  defspace my-set < super-set end
+
+  defoperator is-member : my-set -> Bool end
+
+  defvar my-var : my-set end
+end

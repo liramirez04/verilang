@@ -18,7 +18,7 @@ data AComponent
 
 // ── Space ─────────────────────────────────────────────────────────────────────
 data ASpace
-    = aSpace(str name, ASpaceSub sub)
+    = aSpaceWithSub(str name, ASpaceSub sub)
     | aSpaceNoSub(str name);
 
 data ASpaceSub

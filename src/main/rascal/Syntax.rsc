@@ -26,7 +26,7 @@ syntax OperatorDef
     = operatorDef: 'defoperator' Name name ':' OperatorType operatorType Attributes? attrs 'end';
 
 syntax OperatorType
-    = opChain: ID firstType OperatorNext* chain;
+    = opChain: ID firstType OperatorNext+ chain;
 
 syntax OperatorNext
     = nextType: '-\>' ID nextId;
@@ -116,7 +116,7 @@ syntax Operator
 lexical FloatLiteral = [0-9]+ "." [0-9]+;
 lexical IntLiteral   = [0-9]+ !>> [0-9.];
 
-lexical ID = ([a-zA-Z][a-zA-Z0-9\-]* !>> [a-zA-Z0-9\-]) \ Reserved;
+lexical ID = ([a-zA-Z]([a-zA-Z0-9] | ("-" [a-zA-Z0-9]))* !>> [a-zA-Z0-9\-]) \ Reserved;
 
 keyword Reserved
     = "defmodule"

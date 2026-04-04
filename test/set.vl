@@ -1,0 +1,17 @@
+defmodule Set
+
+using List
+
+defspace Set < SuperSet end
+
+defoperator union: Set -> Set -> Set end
+
+defoperator isIn: Element -> Set -> Bool end
+
+defoperator negation: Bool -> Bool end
+
+defvar p:Bool , q:Bool end
+
+defrule (implication p q) -> (disjunction (negation p) q) end
+
+end
