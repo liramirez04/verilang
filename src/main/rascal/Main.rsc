@@ -6,7 +6,7 @@ import ParseTree;
 import IO;
 import String;
 
-// Recibe la ruta de un archivo .vl y retorna el arbol de parseo concreto
+// Recibe la ruta de un archivo .txt y retorna el arbol de parseo concreto
 Tree parseFile(loc source) {
     return parse(#start[Module], source);
 }
@@ -143,7 +143,7 @@ AVarDecl buildVarDecl((VariableDecl)`<ID name> : <ID varType>`)
 // ── Entry point ───────────────────────────────────────────────────────────────
 int main(int testArgument=0) {
     println("VeriLang parser ready.");
-    println("Use parseFile(|file:///path/to/program.vl|) to parse a file.");
-    println("Use buildAST(|file:///path/to/program.vl|) to get the AST.");
+    println("Use parseFile(|file:///path/to/program.txt|) to parse a file.");
+    println("Use buildAST(|file:///path/to/program.txt|) to get the AST.");
     return testArgument;
 }
