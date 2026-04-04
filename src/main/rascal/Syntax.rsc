@@ -48,18 +48,17 @@ syntax ExpressionDef
 
 syntax ExpressionBody
     = quantified:   '(' Quantifier quantifier ID variable 'in' ID domain '.' ExpressionBody body ')'
-    | binary:       '(' ExpressionBody left Operator op ExpressionBody right ')'
+    | binary:       '(' Expression left Operator op Expression right ')'
     | functionCall: '(' Name func ExpressionList args ')'
-    | exprId:       Expression expr ID id ExpressionBody rest
-    | exprOp:       Expression expr Operator op ExpressionBody rest
-    | simpleExpr:   Expression expr;
+    > exprId:       Expression expr ID id ExpressionBody rest
+    > exprOp:       Expression expr Operator op ExpressionBody rest
+    > simpleExpr:   Expression expr;
 
 syntax ExpressionList
     = exprList: Expression* exprs;
 
 syntax Expression
     = nested:      '(' ExpressionBody body ')'
-    | namedExpr:   Name name ExpressionList args
     | identifier:  ID id
     | intNumber:   IntLiteral n
     | floatNumber: FloatLiteral f;
@@ -110,7 +109,9 @@ syntax Operator
     | neg:     'neg' !>> [a-zA-Z0-9\-]
     | implies: '-\>'
     | inOp:    'in'  !>> [a-zA-Z0-9\-]
-    | arrow:   '=\>';
+    | arrow:   '=\>'
+    | equiv:   '≡'
+    | emptySet:'∅';
 
 lexical FloatLiteral = [0-9]+ "." [0-9]+;
 lexical IntLiteral   = [0-9]+ !>> [0-9.];

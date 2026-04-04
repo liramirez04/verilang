@@ -47,7 +47,7 @@ data AExpressionDef
 
 data AExpressionBody
     = aQuantified(str quantifier, str variable, str domain, AExpressionBody body)
-    | aBinary(AExpressionBody left, str op, AExpressionBody right)
+    | aBinary(AExpression left, str op, AExpression right)
     | aFunctionCall(str func, list[AExpression] args)
     | aExprId(AExpression expr, str id, AExpressionBody rest)
     | aExprOp(AExpression expr, str op, AExpressionBody rest)
@@ -55,7 +55,6 @@ data AExpressionBody
 
 data AExpression
     = aNested(AExpressionBody body)
-    | aNamed(str name, list[AExpression] args)
     | aIdentifier(str id)
     | aIntNumber(int n)
     | aFloatNumber(real f);

@@ -4,7 +4,7 @@ import Syntax;
 import AST;
 import ParseTree;
 import IO;
-import String;
+import Set;
 
 // Recibe la ruta de un archivo .txt y retorna el arbol de parseo concreto
 Tree parseFile(loc source) {
@@ -85,12 +85,19 @@ AAttributeValue buildAttributeValue((AttributeValue)`: <Operator op>`)
 AExpressionDef buildExpressionDef((ExpressionDef)`defexpression <ExpressionBody body> end`)
     = aExpressionDef(buildExpressionBody(body));
 
+AExpressionBody buildExpressionBody(Tree t) {
+    if (amb(set[Tree] alts) := t) {
+        return buildExpressionBody(getOneFrom(alts));
+    }
+    fail;
+}
+
 AExpressionBody buildExpressionBody(
     (ExpressionBody)`( <Quantifier q> <ID var> in <ID dom> . <ExpressionBody body> )`)
     = aQuantified("<q>", "<var>", "<dom>", buildExpressionBody(body));
 AExpressionBody buildExpressionBody(
-    (ExpressionBody)`( <ExpressionBody left> <Operator op> <ExpressionBody right> )`)
-    = aBinary(buildExpressionBody(left), "<op>", buildExpressionBody(right));
+    (ExpressionBody)`( <Expression left> <Operator op> <Expression right> )`)
+    = aBinary(buildExpression(left), "<op>", buildExpression(right));
 AExpressionBody buildExpressionBody(
     (ExpressionBody)`( <Name func> <ExpressionList args> )`)
     = aFunctionCall(buildName(func), buildExpressionList(args));
@@ -109,8 +116,6 @@ list[AExpression] buildExpressionList((ExpressionList)`<Expression* exprs>`)
 
 AExpression buildExpression((Expression)`( <ExpressionBody body> )`)
     = aNested(buildExpressionBody(body));
-AExpression buildExpression((Expression)`<Name name> <ExpressionList args>`)
-    = aNamed(buildName(name), buildExpressionList(args));
 AExpression buildExpression((Expression)`<ID id>`)
     = aIdentifier("<id>");
 AExpression buildExpression((Expression)`<IntLiteral n>`)
