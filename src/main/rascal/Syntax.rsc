@@ -132,7 +132,4 @@ keyword Reserved
     | "in"
     | "and"
     | "or"
-    | "neg"
-    | "if"
-    | "cond"
-    | "for";
+    | "neg";
