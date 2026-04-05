@@ -149,8 +149,29 @@ AVarDecl buildVarDecl((VariableDecl)`<ID name> : <ID varType>`)
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 int main(int testArgument=0) {
-    println("VeriLang parser ready.");
     println("Use parseFile(|file:///path/to/program.txt|) to parse a file.");
     println("Use buildAST(|file:///path/to/program.txt|) to get the AST.");
+
+    println("Iniciando pruebas automaticas de VeriLang...");
+    
+    // Para ejecutar otro archivo, puedes modificar cuales se ejecutan desde esta linea:
+    list[loc] tests = [
+        |project://verilang/test/set.txt|,
+        |project://verilang/test/setTheory.txt|,
+        |project://verilang/test/dashTest.txt|,
+        |project://verilang/test/existence.txt|,
+        |project://verilang/test/hard4.txt|
+    ];
+    
+    for (t <- tests) {
+        println("--------------------------------------------------");
+        println("- Analizando: <t>");
+        AModule ast = buildAST(t);
+        println("- \> Exito al parsear y construir el AST. Aqui esta el Arbol (AST):");
+        iprintln(ast);
+    }
+    
+    println("--------------------------------------------------");
+    println("Todas las pruebas finalizaron correctamente.");
     return testArgument;
 }
