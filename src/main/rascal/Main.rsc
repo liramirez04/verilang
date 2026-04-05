@@ -2,20 +2,13 @@ module Main
 
 import Syntax;
 import AST;
+import Parser;
 import ParseTree;
 import IO;
 import Set;
 import String;
 
-// Recibe la ruta de un archivo .txt y retorna el arbol de parseo concreto
-Tree parseFile(loc source) {
-    return parse(#start[Module], source, allowAmbiguity=true);
-}
 
-// Recibe un string con codigo VeriLang y retorna el arbol de parseo
-Tree parseString(str src) {
-    return parse(#start[Module], src, allowAmbiguity=true);
-}
 
 // Construye el AST (AModule) a partir del arbol de parseo concreto
 AModule buildAST(loc source) {
