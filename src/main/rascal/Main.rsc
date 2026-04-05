@@ -156,11 +156,11 @@ int main(int testArgument=0) {
     
     // Para ejecutar otro archivo, puedes modificar cuales se ejecutan desde esta linea:
     list[loc] tests = [
-        |project://verilang/test/set.txt|,
-        |project://verilang/test/setTheory.txt|,
-        |project://verilang/test/dashTest.txt|,
-        |project://verilang/test/existence.txt|,
-        |project://verilang/test/hard4.txt|
+        |project://verilang/test/set.vl|,
+        |project://verilang/test/setTheory.vl|,
+        |project://verilang/test/dashTest.vl|,
+        |project://verilang/test/existence.vl|,
+        |project://verilang/test/hard4.vl|
     ];
     
     for (t <- tests) {
