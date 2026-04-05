@@ -3,6 +3,7 @@ module Plugin
 import IO;
 import ParseTree;
 import util::LanguageServer;
+import util::Reflective;
 
 import Syntax;
 import Parser;
