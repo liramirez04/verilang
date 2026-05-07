@@ -1,0 +1,20 @@
+# Test: Reglas anidadas y multiples parametros
+defmodule NestedRules
+  defspace Prop end
+
+  defoperator implies : Prop -> Prop -> Prop end
+  defoperator not : Prop -> Prop end
+  defoperator and : Prop -> Prop -> Prop end
+  defoperator or : Prop -> Prop -> Prop end
+
+  defvar p : Prop, q : Prop, r : Prop end
+
+  # Regla con parametros anidados profundos
+  defrule (implies p (implies q r)) -> (implies (and p q) r) end
+
+  # Regla con negacion anidada
+  defrule (not (not p)) -> (or p p) end
+
+  # Expresion con cuantificador y operadores anidados
+  defexpression (forall p in Prop . (forall q in Prop . (implies p q) or (not p))) end
+end

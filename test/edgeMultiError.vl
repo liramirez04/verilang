@@ -1,0 +1,17 @@
+# Test: Multiples errores de tipo y existencia
+defmodule MultiError
+  defspace Animal end
+
+  # Error: "Planta" no existe como espacio
+  defoperator comer : Animal -> Planta end
+
+  # Error: "volar" no existe como operador
+  defrule (volar x) -> (comer x) end
+
+  # Error: "Galaxia" no existe como espacio
+  defvar z : Galaxia end
+
+  # Correcto: usa espacios y operadores definidos
+  defvar a : Animal end
+  defexpression (comer a) end
+end

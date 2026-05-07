@@ -48,8 +48,8 @@ syntax ExpressionDef
 
 syntax ExpressionBody
     = quantified:   '(' Quantifier quantifier ID variable 'in' ID domain '.' ExpressionBody body ')'
-    | binary:       '(' Expression left Operator op Expression right ')'
     | functionCall: '(' Name func ExpressionList args ')'
+    | binary:       '(' Expression left Operator op Expression right ')'
     > exprId:       Expression expr ID id ExpressionBody rest
     > exprOp:       Expression expr Operator op ExpressionBody rest
     > simpleExpr:   Expression expr;
@@ -58,10 +58,13 @@ syntax ExpressionList
     = exprList: Expression* exprs;
 
 syntax Expression
-    = nested:      '(' ExpressionBody body ')'
-    | identifier:  ID id
-    | intNumber:   IntLiteral n
-    | floatNumber: FloatLiteral f;
+    = nested:       '(' ExpressionBody body ')'
+    | identifier:   ID id
+    | intNumber:    IntLiteral n
+    | floatNumber:  FloatLiteral f
+    | boolValue:    BoolLiteral b
+    | charValue:    CharLiteral c
+    | stringValue:  StringLiteral s;
 
 syntax Quantifier
     = forall: 'forall'
@@ -116,6 +119,11 @@ syntax Operator
 lexical FloatLiteral = [0-9]+ "." [0-9]+;
 lexical IntLiteral   = [0-9]+ !>> [0-9.];
 
+// Nuevos literales para Proyecto 3
+lexical BoolLiteral   = "true" | "false";
+lexical CharLiteral   = [\'] ![\'\\\n] [\'];
+lexical StringLiteral = [\"] ![\"\\\n]* [\"];
+
 lexical ID = ([a-zA-Z]([a-zA-Z0-9] | ("-" [a-zA-Z0-9]))* !>> [a-zA-Z0-9\-]) \ Reserved;
 
 keyword Reserved
@@ -132,4 +140,6 @@ keyword Reserved
     | "in"
     | "and"
     | "or"
-    | "neg";
+    | "neg"
+    | "true"
+    | "false";

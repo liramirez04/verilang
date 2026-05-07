@@ -3,6 +3,8 @@ module Main
 import Syntax;
 import AST;
 import Parser;
+import Checker;
+import Evaluator;
 import ParseTree;
 import IO;
 import Set;
@@ -91,27 +93,26 @@ AExpressionBody buildExpressionBody(Tree t) {
     if (amb(set[Tree] alts) := t) {
         return buildExpressionBody(getOneFrom(alts));
     }
-    fail;
+    if (t is quantified) {
+        return aQuantified("<t.quantifier>", "<t.variable>", "<t.domain>", buildExpressionBody(t.body));
+    }
+    else if (t is functionCall) {
+        return aFunctionCall(buildName(t.func), buildExpressionList(t.args));
+    }
+    else if (t is binary) {
+        return aBinary(buildExpression(t.left), "<t.op>", buildExpression(t.right));
+    }
+    else if (t is exprId) {
+        return aExprId(buildExpression(t.expr), "<t.id>", buildExpressionBody(t.rest));
+    }
+    else if (t is exprOp) {
+        return aExprOp(buildExpression(t.expr), "<t.op>", buildExpressionBody(t.rest));
+    }
+    else if (t is simpleExpr) {
+        return aSimpleExpr(buildExpression(t.expr));
+    }
+    throw "Unexpected ExpressionBody: <t>";
 }
-
-AExpressionBody buildExpressionBody(
-    (ExpressionBody)`( <Quantifier q> <ID var> in <ID dom> . <ExpressionBody body> )`)
-    = aQuantified("<q>", "<var>", "<dom>", buildExpressionBody(body));
-AExpressionBody buildExpressionBody(
-    (ExpressionBody)`( <Expression left> <Operator op> <Expression right> )`)
-    = aBinary(buildExpression(left), "<op>", buildExpression(right));
-AExpressionBody buildExpressionBody(
-    (ExpressionBody)`( <Name func> <ExpressionList args> )`)
-    = aFunctionCall(buildName(func), buildExpressionList(args));
-AExpressionBody buildExpressionBody(
-    (ExpressionBody)`<Expression expr> <ID id> <ExpressionBody rest>`)
-    = aExprId(buildExpression(expr), "<id>", buildExpressionBody(rest));
-AExpressionBody buildExpressionBody(
-    (ExpressionBody)`<Expression expr> <Operator op> <ExpressionBody rest>`)
-    = aExprOp(buildExpression(expr), "<op>", buildExpressionBody(rest));
-AExpressionBody buildExpressionBody(
-    (ExpressionBody)`<Expression expr>`)
-    = aSimpleExpr(buildExpression(expr));
 
 list[AExpression] buildExpressionList((ExpressionList)`<Expression* exprs>`)
     = [ buildExpression(e) | e <- exprs ];
@@ -124,6 +125,12 @@ AExpression buildExpression((Expression)`<IntLiteral n>`)
     = aIntNumber(toInt("<n>"));
 AExpression buildExpression((Expression)`<FloatLiteral f>`)
     = aFloatNumber(toReal("<f>"));
+AExpression buildExpression((Expression)`<BoolLiteral b>`)
+    = aBoolLiteral("<b>" == "true");
+AExpression buildExpression((Expression)`<CharLiteral c>`)
+    = aCharLiteral("<c>");
+AExpression buildExpression((Expression)`<StringLiteral s>`)
+    = aStringLiteral("<s>");
 
 // ── RuleDef ───────────────────────────────────────────────────────────────────
 ARuleDef buildRuleDef(
@@ -147,31 +154,73 @@ list[AVarDecl] buildVariableList((VariableList)`<{VariableDecl ","}+ decls>`)
 AVarDecl buildVarDecl((VariableDecl)`<ID name> : <ID varType>`)
     = aVarDecl("<name>", "<varType>");
 
+
+void runFile(loc source) {
+    println("==================================================");
+    println("  Procesando: <source>");
+    println("==================================================");
+
+    // 1. Parsear
+    println("\n[1] Parseando archivo...");
+    Tree pt = parseFile(source);
+    println("    -- Parseo exitoso.");
+
+    // 2. Construir AST
+    println("[2] Construyendo AST...");
+    AModule ast = buildModule(pt.top);
+    println("    -- AST construido.");
+
+    // 3. Type check con TypePal
+    println("[3] Verificando tipos con TypePal...");
+    TModel tm = typeCheck(pt);
+    
+    if (size(tm.messages) > 0) {
+        println("    -- Se encontraron <size(tm.messages)> mensaje(s):");
+        for (msg <- tm.messages) {
+            println("       ! <msg>");
+        }
+    } else {
+        println("    -- Sin errores de tipo.");
+    }
+
+    // 4. Evaluar/imprimir resultado
+    println("[4] Resultado del programa:\n");
+    evalModule(ast);
+    println("");
+}
+
 // ── Entry point ───────────────────────────────────────────────────────────────
 int main(int testArgument=0) {
-    println("Use parseFile(|file:///path/to/program.txt|) to parse a file.");
-    println("Use buildAST(|file:///path/to/program.txt|) to get the AST.");
+    println("╔══════════════════════════════════════════════════════════════╗");
+    println("║           VeriLang - Proyecto 3: Sistema de Tipos           ║");
+    println("╚══════════════════════════════════════════════════════════════╝\n");
 
-    println("Iniciando pruebas automaticas de VeriLang...");
-    
-    // Para ejecutar otro archivo, puedes modificar cuales se ejecutan desde esta linea:
     list[loc] tests = [
         |project://verilang/test/set.vl|,
         |project://verilang/test/setTheory.vl|,
         |project://verilang/test/dashTest.vl|,
         |project://verilang/test/existence.vl|,
-        |project://verilang/test/hard4.vl|
+        |project://verilang/test/hard4.vl|,
+        |project://verilang/test/typeError.vl|,
+        |project://verilang/test/edgeEmpty.vl|,
+        |project://verilang/test/edgeLiterals.vl|,
+        |project://verilang/test/edgeMultiError.vl|,
+        |project://verilang/test/edgePrimitives.vl|,
+        |project://verilang/test/edgeNested.vl|
     ];
-    
+
     for (t <- tests) {
-        println("--------------------------------------------------");
-        println("- Analizando: <t>");
-        AModule ast = buildAST(t);
-        println("- \> Exito al parsear y construir el AST. Aqui esta el Arbol (AST):");
-        iprintln(ast);
+        try {
+            runFile(t);
+        } catch ParseError(loc l): {
+            println("  ERROR DE PARSEO en <l>");
+        } catch e: {
+            println("  ERROR: <e>");
+        }
     }
-    
-    println("--------------------------------------------------");
-    println("Todas las pruebas finalizaron correctamente.");
+
+    println("\n==================================================");
+    println("  Todas las pruebas finalizaron.");
+    println("==================================================");
     return testArgument;
 }

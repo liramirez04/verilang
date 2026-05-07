@@ -1,0 +1,3 @@
+# Test: Modulo minimo sin componentes
+defmodule Empty
+end

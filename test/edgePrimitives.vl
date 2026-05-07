@@ -1,0 +1,18 @@
+# Test: Tipos primitivos usados como tipos de variable
+defmodule PrimitiveTypes
+  defspace Color end
+
+  defoperator mezclar : Color -> Color -> Color end
+  defoperator esRojo : Color -> Bool end
+  defoperator nombre : Color -> String end
+  defoperator codigo : Color -> Int end
+  defoperator inicial : Color -> Char end
+
+  defvar c1 : Color, c2 : Color end
+  defvar flag : Bool end
+  defvar n : Int end
+  defvar ch : Char end
+  defvar s : String end
+
+  defexpression (forall c1 in Color . (esRojo c1)) end
+end

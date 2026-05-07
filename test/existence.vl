@@ -2,6 +2,7 @@ defmodule Existence
   using Base
 
   defspace Nat end
+  defspace Bool end
 
   defoperator isZero : Nat -> Bool end
 

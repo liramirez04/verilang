@@ -1,5 +1,14 @@
 module AST
 
+// ── Tipos para el sistema de tipos (Proyecto 3) ──────────────────────────────
+data AType
+    = aIntType()
+    | aBoolType()
+    | aCharType()
+    | aStringType()
+    | aSpaceType(str name)
+    | aUnknownType();
+
 // ── Module ────────────────────────────────────────────────────────────────────
 data AModule
     = aModule(str name, list[AImport] imports, list[AComponent] comps);
@@ -57,7 +66,10 @@ data AExpression
     = aNested(AExpressionBody body)
     | aIdentifier(str id)
     | aIntNumber(int n)
-    | aFloatNumber(real f);
+    | aFloatNumber(real f)
+    | aBoolLiteral(bool boolVal)
+    | aCharLiteral(str charVal)
+    | aStringLiteral(str stringVal);
 
 // ── Rule definition ───────────────────────────────────────────────────────────
 data ARuleDef

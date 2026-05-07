@@ -1,0 +1,23 @@
+# Archivo de prueba con errores de tipo intencionales
+# El type checker deberia detectar:
+# - "Fantasma" no esta definido como espacio
+# - "inventado" no esta definido como operador
+
+defmodule ErrorTest
+  using Base
+
+  defspace Nat end
+  defspace Bool end
+
+  defoperator isZero : Nat -> Bool end
+
+  # Error: "Fantasma" no esta definido como espacio
+  defoperator fantasmaOp : Fantasma -> Bool end
+
+  # Error: "inventado" no esta definido como operador
+  defrule (inventado x) -> (isZero x) end
+
+  defvar x : Nat, flag : Bool end
+
+  defexpression (exists x in Nat . (isZero x)) end
+end

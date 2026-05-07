@@ -1,0 +1,12 @@
+# Test: Literales de los nuevos tipos (Bool, Char, String)
+defmodule Literals
+  defspace Nat end
+
+  defoperator identity : Nat -> Nat end
+
+  # Expresion con literal booleano
+  defexpression true end
+
+  # Expresion con literal entero
+  defexpression 42 end
+end
