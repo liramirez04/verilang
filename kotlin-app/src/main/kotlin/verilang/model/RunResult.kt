@@ -1,5 +1,5 @@
 // TODO: cambia "milang" por el nombre de tu lenguaje
-package milang.model
+package verilang.model
 
 import kotlinx.serialization.Serializable
 

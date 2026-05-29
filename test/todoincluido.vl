@@ -1,0 +1,15 @@
+defmodule Logic
+  defspace Bool end
+  defspace Nat end
+
+  defoperator and : Bool -> Bool -> Bool end
+  defoperator or : Bool -> Bool -> Bool end
+  defoperator not : Bool -> Bool end
+  defoperator succ : Nat -> Nat end
+
+  defvar p : Bool , q : Bool end
+
+  defrule (and p q) -> (not (or (not p) (not q))) end
+
+  defexpression (forall p in Bool . (p or p)) end
+end

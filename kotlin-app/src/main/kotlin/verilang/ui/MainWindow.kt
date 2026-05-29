@@ -1,5 +1,5 @@
 // TODO: si renombraste el paquete, cambia "milang" por el nombre de tu lenguaje
-package milang.ui
+package verilang.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,8 +15,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
-import milang.model.RunResult
-import milang.service.LangService
+import verilang.model.RunResult
+import verilang.service.LangService
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter

@@ -1,4 +1,5 @@
 # Rascal build output
+# Rascal build output
 target/
 
 # Kotlin/Gradle build output
@@ -7,6 +8,7 @@ kotlin-app/.gradle/
 kotlin-app/gradle-dist/
 kotlin-app/gradle.zip
 kotlin-app/gradle-8.7/
+kotlin-app/gradle.properties
 
 # El jar de Rascal es un binario grande, no va en el repo
 rascal-shell-stable.jar

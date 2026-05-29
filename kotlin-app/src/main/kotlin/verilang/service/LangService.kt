@@ -1,10 +1,10 @@
 // TODO: si renombraste el paquete, cambia "milang" por el nombre de tu lenguaje
-package milang.service
+package verilang.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import milang.model.RunResult
+import verilang.model.RunResult
 import java.io.File
 import java.util.concurrent.TimeUnit
 

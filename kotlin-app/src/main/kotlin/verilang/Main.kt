@@ -1,11 +1,11 @@
 // TODO: si renombraste el paquete, cambia "milang" por el nombre de tu lenguaje
-package milang
+package verilang
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import milang.ui.MainWindow
+import verilang.ui.MainWindow
 
 fun main() = application {
     Window(
