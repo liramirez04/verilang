@@ -1,5 +1,4 @@
 module Checker
-
 import Syntax;
 import ParseTree;
 extend analysis::typepal::TypePal;
@@ -48,7 +47,7 @@ data IdRole
 // ═══════════════════════════════════════════════════════════════════════════════
 // Configuracion de TypePal
 // ═══════════════════════════════════════════════════════════════════════════════
-TypePalConfig vlConfig() = tconfig();
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Recoleccion: Module (punto de entrada)
@@ -60,6 +59,11 @@ void collect(current: (Module) `defmodule <ID name> <Import* imports> <Component
     c.define("Bool", spaceId(), current, defType(boolType()));
     c.define("Char", spaceId(), current, defType(charType()));
     c.define("String", spaceId(), current, defType(stringType()));
+    
+    for (imp <- imports) {
+        collect(imp, c);
+    }
+    
     for (comp <- comps) {
         collect(comp, c);
     }
@@ -71,6 +75,10 @@ void collect(current: (Module) `defmodule <ID name> <Import* imports> <Component
 // ═══════════════════════════════════════════════════════════════════════════════
 void collect(current: (Component) `<Space s>`, Collector c) {
     collect(s, c);
+}
+
+void collect(Import current, Collector c) {
+    // no hacer nada - imports externos no se verifican
 }
 
 void collect(current: (Component) `<OperatorDef op>`, Collector c) {
@@ -254,5 +262,5 @@ void collect(Parameter current, Collector c) {
 // ═══════════════════════════════════════════════════════════════════════════════
 public TModel typeCheck(Tree pt) {
     if (pt has top) pt = pt.top;
-    return collectAndSolve(pt, config = vlConfig());
+    return collectAndSolve(pt, config = tconfig());
 }

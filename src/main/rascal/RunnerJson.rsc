@@ -10,6 +10,7 @@ import IO;
 import Set;
 import List;
 import String;
+import Exception;
 
 // ── JSON utilities ────────────────────────────────────────────────────────────
 
@@ -104,7 +105,7 @@ void main(list[str] args) {
     // Parsing
     Tree cst;
     try {
-        cst = parse(#start[Module], src, allowAmbiguity=true);
+        cst = parse(#start[Module], src);
     } catch ParseError(loc at): {
         println(jsonResult(false, "", false, false, false, [], [], [],
             "Error de parsing en <at>", "", ""));
@@ -136,14 +137,9 @@ void main(list[str] args) {
     // Verificación de nombres con TypePal (Checker)
     list[str] tcErrs = [];
     bool tcOk = true;
-    try {
-        TModel tm = typeCheck(cst);
-        tcErrs = ["<msg> (en <at>)" | error(str msg, loc at) <- toList(tm.messages)];
-        tcOk   = isEmpty(tcErrs);
-    } catch e: {
-        tcErrs = ["Error en verificación de nombres: <e>"];
-        tcOk   = false;
-    }
+    TModel tm = typeCheck(cst);
+    tcErrs = ["<msg> (en <at>)" | error(str msg, loc at) <- tm.messages];
+    tcOk   = isEmpty(tcErrs);
 
     // Output: resumen de componentes del módulo
     list[str] output = summarize(ast);

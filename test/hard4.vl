@@ -8,6 +8,7 @@ defmodule FullModule
   defspace Element end
   defspace Bool end
   defspace Nat < Int end
+  defspace Real end
   defspace Int < Real end
 
   defoperator union : Set -> Set -> Set [associative id] end
