@@ -1,0 +1,9 @@
+# Rascal build output
+target/
+
+# Kotlin/Gradle build output
+kotlin-app/build/
+kotlin-app/.gradle/
+
+# El jar de Rascal es un binario grande, no va en el repo
+rascal-shell-stable.jar
