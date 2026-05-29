@@ -90,9 +90,10 @@ void main(list[str] args) {
     // Leer el archivo fuente
     str src;
     try {
+        str path = isEmpty(args) ? "" : replaceAll(args[0], "\\", "/");
         loc file = isEmpty(args)
             ? |project://verilang/test/set.vl|
-            : (startsWith(args[0], "/") ? |file:///| + args[0] : |cwd:///| + args[0]);
+            : ((startsWith(path, "/") || findFirst(path, ":/") != -1) ? |file:///| + path : |cwd:///| + path);
         src = readFile(file);
     } catch e: {
         println(jsonResult(false, "", false, false, false, [], [], [],
